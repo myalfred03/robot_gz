@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/yesser/ros_qtc_plugin/src/robot_gz/plugin/build/devel/setup.sh

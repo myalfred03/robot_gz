@@ -30,9 +30,9 @@ namespace gazebo
     private: event::ConnectionPtr updateConnection;
     private: physics::ModelPtr model;
     private: physics::JointPtr joints[6];
-    private: common::PID pid;
+    private: common::PID pid[6];// , pid2, pid3, pid4, pid5, pid6;
     public:  std::vector<float> jointvalues = std::vector<float>(6);
-    public:  double P_, I_, D_;
+    public:  double P_, I_, D_, Imax_, Imin_;
     public:  std::string jname;
     public: physics::JointPtr joint;//, joint2, joint3, joint4, joint5, joint6 ;
     public: trajectory_msgs::JointTrajectory msg1;
@@ -52,7 +52,7 @@ namespace gazebo
       }
 
       model = _model;
-      pid = common::PID(60.0, 4, 10.0);
+      //pid = common::PID(60.0, 4, 10.0);
 
          joints[0] = this->model->GetJoint("joint_1");// GetJoint("joint_1"); 
          joints[1] = this->model->GetJoint("joint_2"); //GetJoints()[1];//
@@ -63,8 +63,18 @@ namespace gazebo
 
       for(i = 0; i < 6; i++)
       {
-        this->model->GetJointController()->SetPositionPID(joints[i]->GetScopedName(), pid);
+       
+        //this->model->GetJointController()->SetPositionPID(joints[i]->GetScopedName(), pid);
+         jointvalues[i] = 0.0;
       }
+
+     pid[0] = common::PID(25,  0, 2.1);
+     pid[1] = common::PID(30,  0, 8.1);
+     pid[2] = common::PID(70,  0, 49.1);
+     pid[3] = common::PID(2,  0, 2.1);
+     pid[4] = common::PID(3,  0, 2.1);
+     pid[5] = common::PID(7,  0, 3.1);
+      
 
       if (!ros::isInitialized())
       {
@@ -95,24 +105,40 @@ namespace gazebo
 
 
     }
-  public: void OnUpdate(const common::UpdateInfo & _info)
-{ 
+   public: void OnUpdate(const common::UpdateInfo & _info)
+ { 
 
 
 
-     for(int i = 0; i < 6; i++)
+     this->model->GetJointController()->SetPositionPID(joints[0]->GetScopedName(), pid[0]);
+     this->model->GetJointController()->SetPositionPID(joints[1]->GetScopedName(), pid[1]);
+     this->model->GetJointController()->SetPositionPID(joints[2]->GetScopedName(), pid[2]);
+     this->model->GetJointController()->SetPositionPID(joints[3]->GetScopedName(), pid[3]);
+     this->model->GetJointController()->SetPositionPID(joints[4]->GetScopedName(), pid[4]);
+     this->model->GetJointController()->SetPositionPID(joints[5]->GetScopedName(), pid[5]);
+
+
+     model->GetJointController()->SetPositionTarget(joints[0]->GetScopedName(), jointvalues[0]);
+     model->GetJointController()->SetPositionTarget(joints[1]->GetScopedName(), jointvalues[1]);
+     model->GetJointController()->SetPositionTarget(joints[2]->GetScopedName(), jointvalues[2]);
+     model->GetJointController()->SetPositionTarget(joints[3]->GetScopedName(), jointvalues[3]);
+     model->GetJointController()->SetPositionTarget(joints[4]->GetScopedName(), jointvalues[4]);
+     model->GetJointController()->SetPositionTarget(joints[5]->GetScopedName(), jointvalues[5]);
+
+         for(int i = 0; i < 6; i++)
       {
-       model->GetJointController()->SetPositionTarget(joints[i]->GetScopedName(), jointvalues[i]);
+     //  model->GetJointController()->SetPositionTarget(joints[i]->GetScopedName(), jointvalues[i]);
        msg1.points[0].positions[i] = joints[i]->Position(0);
        msg1.points[1].positions[i] = joints[i]->GetVelocity(0);
       }
         rosjoint.publish(msg1);
- }
+    
+  }
 
 
   public: void pidupdate(const trajectory_msgs::JointTrajectory &msg){
          jname = msg.joint_names[0];
-   
+        int p;
    //  joint1 = modelo->GetJoint("joint_1");
   // this->joint1 = this->modelo->GetJoints()[1];
          // this->pid1 = common::PID(msg.points[0].positions[0], 10, 1.47, 10, -10,joint1->GetVelocityLimit(0), -1*joint1->GetVelocityLimit(0));
@@ -125,10 +151,14 @@ namespace gazebo
          P_= msg.points[0].positions[0];
          I_= msg.points[0].positions[1];
          D_= msg.points[0].positions[2];
-     pid = common::PID(P_, I_, D_);
-     joint = model->GetJoint(jname);
-     this->model->GetJointController()->SetPositionPID(joint->GetScopedName(), pid);
-          std::cout<<"DATA PID"<<  P_ << I_ << D_ << std::endl;
+         Imax_ = msg.points[0].positions[3];
+         Imin_ = msg.points[0].positions[4];
+         joint = model->GetJoint(jname);
+         p = msg.points[0].velocities[0];
+
+     pid[p] = common::PID(P_, I_, D_);//, Imax_, Imin_, joint->UpperLimit(0), joint->LowerLimit(0));
+
+          std::cout<<"DATA PID "<<  P_ << I_ << D_ << "\n " << msg.points[0].velocities[0] << "   "  <<jname<< std::endl;
 
    }
 
@@ -149,25 +179,25 @@ namespace gazebo
                   for (int m=1; m<it; m++){
 
                   for (int i = 0; i < 6; i++) {
-                    jointvalues[i] = (msg.points[m].positions[i]+0.001)/ToG;
+                    jointvalues[i] = (msg.points[m].positions[i])/ToG;
                     velvalues  [i] = msg.points[m].velocities[i];
                     jointname[i] = msg.joint_names[i];
-                    std::cout<< jointname[5] << std::endl;
+                    std::cout<< jointvalues[i] << "\n"<< std::endl;
 
 
                    //msgpub.points[0].positions[i] = msg.points[0].positions[i];
 
                   // Comandos::wait(velocities(0));
-                //   model->GetJointController()->SetPositionTarget(joints[i]->GetScopedName(), jointvalues[i]);
+               //    model->GetJointController()->SetPositionTarget(joints[i]->GetScopedName(), jointvalues[i]);
                //    boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 
                   }
 
               } //for points
 
-      // for(int i = 0; i < 6; i++)
+      // for(int ii = 0; ii < 6; ii++)
       // {
-      //   model->GetJointController()->SetPositionTarget(piston[i]->GetScopedName(), msg->data[i]);
+      //     model->GetJointController()->SetPositionTarget(joints[ii]->GetScopedName(), jointvalues[ii]);
       // }
     }
 
@@ -177,6 +207,8 @@ namespace gazebo
       while (rosNode->ok())
       {
         rosQueue.callAvailable(ros::WallDuration(timeout));
+
+
       }
     }
 

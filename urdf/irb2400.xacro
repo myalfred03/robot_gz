@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+
+<robot name="abb_irb2400" xmlns:xacro="http://ros.org/wiki/xacro">
+	<xacro:property name="pi" value="3.1415926535897931" />
+
+	<xacro:include filename="$(find robot_gz)/urdf/irb2400.gazebo" />
+	<xacro:include filename="$(find robot_gz)/urdf/materials.xacro" />
+    <xacro:include filename="$(find robot_gz)/urdf/irb2400_macro.xacro"/>
+	<xacro:include filename="$(find robot_gz)/urdf/irb2400_transmission.xacro"/>
+    
+    <xacro:abb_irb2400 prefix=""/>
+    <xacro:abb_irb2400_transmission prefix=""/>
+
+
+    <!-- Used for fixing robot to Gazebo world -->
+    <link name="world"/>
+    <joint name="fixed" type="fixed">
+      <parent link="world"/>
+      <child link="base_link"/>
+    </joint>
+
+</robot>

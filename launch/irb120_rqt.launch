@@ -1,0 +1,7 @@
+<launch>
+
+  <!-- Load RQT with a pre-setup GUI for IRB120 controls from a perspective file  -->
+  <node name="abb_irb120_rqt" pkg="rqt_gui" type="rqt_gui" respawn="false"
+	output="screen" args="--perspective-file $(find robot_gz)/launch/miabb120.perspective"/>
+  
+</launch>
