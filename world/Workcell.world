@@ -1899,9 +1899,9 @@
       </light>
 
   <model name='table_bga'>
-        <pose>1 1 0 0 0 0</pose>
+        <pose>0 0 0 0 0 0</pose>
         <link name='Table'>
-          <pose>1 1 0 0 0 0</pose>
+          <pose>-0.2 -0.1 0 0 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>6.57449 6.91531 14.5787 -0.48332 -0.193869 -1.33048</acceleration>
           <wrench>177.447 186.646 393.483 0 -0 0</wrench>

@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+
+
+
+  <arg name = "paused" default = "false"/>
+  <arg name = "use_sim_time" default = "true"/>
+  <arg name = "gui" default = "true"/>
+  <arg name = "headless" default = "false"/>
+  <arg name = "debug" default = "false"/>
+  <arg name = "verbose" default = "true"/>
+
+  <include file = "$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name = "world_name" value = "$(find robot_gz)/world/Workcell.world" />
+    <arg name = "debug" value = "$(arg debug)" />
+    <arg name = "gui" value = "$(arg gui)" />
+    <arg name = "paused" value = "$(arg paused)" />
+    <arg name = "use_sim_time" value = "$(arg use_sim_time)" />
+    <arg name = "headless" value = "$(arg headless)" />
+    <arg name = "verbose" value = "$(arg verbose)" />
+  </include>
+
+<!--
+<param name="robot_description"
+    command="$(find xacro)/xacro inorder '$(find robot_gz)/urdf/irb2400.xacro'" />
+-->
+   <param name="robot_description" command="$(find xacro)/xacro.py '$(find irb120_description)/urdf/irb120V.xacro'" />
+<!--
+	<node name="abb_irb2400_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+	 args="-urdf -param robot_description -model abb_irb2400" />	
+
+<include file="$(find abb_irb2400_gazebo)/launch/irb2400_control.launch" />
+-->
+
+
+ <include file="$(find robot_gz)/launch/irb120_controlV.launch"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+
+ <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+	args="-urdf -model irb120 -param robot_description"/>
+
+<node name="interpreter_gui_gz" pkg="interpreter_gui_gz" type="interpreter_gui_gz"/>
+
+</launch>
