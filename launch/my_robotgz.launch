@@ -22,5 +22,5 @@
 
 
 <node name="interpreter_gui_gz" pkg="interpreter_gui_gz" type="interpreter_gui_gz"/>
-
+<node name="interpreter_xyz_rpy" pkg="interpreter_xyz_rpy" type="interpreter_xyz_rpy"/>
 </launch>
