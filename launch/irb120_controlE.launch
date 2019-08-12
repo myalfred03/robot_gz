@@ -5,7 +5,7 @@
   <rosparam file="$(find robot_gz)/config/irb120_controlE.yaml" command="load"/>
 
   <!-- load the controllers -->
-  <!--  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+  <!-- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
 	output="screen" ns="/robot" args="joint_state_controller
 					   joint_1_position_controller
 					   joint_2_position_controller
@@ -14,7 +14,8 @@
   					   joint_5_position_controller
 					   joint_6_position_controller"/>
 
--->
+
+ -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" ns="/robot" args="
 					   joint_1_position_controller
 					   joint_2_position_controller

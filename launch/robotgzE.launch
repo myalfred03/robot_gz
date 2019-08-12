@@ -24,7 +24,7 @@
 <param name="robot_description"
     command="$(find xacro)/xacro inorder '$(find robot_gz)/urdf/irb2400.xacro'" />
 -->
-   <param name="robot_description" command="$(find xacro)/xacro.py '$(find irb120_description)/urdf/irb120E.xacro'" />
+   <param name="robot_description" command="$(find xacro)/xacro.py  '$(find irb120_description)/urdf/irb120E.xacro'"/>
 <!--
 	<node name="abb_irb2400_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
 	 args="-urdf -param robot_description -model abb_irb2400" />	
